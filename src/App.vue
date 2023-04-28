@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-neutral-800 h-screen text-neutral-100 transition-colors">
+	<div class="bg-slate-50 h-screen dark:bg-neutral-800 transition-colors">
 		<router-view></router-view>
 	</div>
 </template>

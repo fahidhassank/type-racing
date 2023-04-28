@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col h-screen select-none">
+	<div class="flex flex-col h-screen select-none dark:text-neutral-300">
 		<div class="p-4 font-mono flex">
 			<div>
 				<div class="text-sm text-left">Accuracy</div>
@@ -20,11 +20,13 @@
 					v-for="character in characters"
 					class="transition-all px-0.5 font-mono"
 					:class="{
-						'text-neutral-500': character.status === 'success',
+						'text-neutral-500 dark:text-neutral-600':
+							character.status === 'success',
+
 						'bg-blue-500 text-white':
 							character.position === cursorPosition &&
 							character.status != 'error',
-						'bg-red-600': character.status == 'error',
+						'bg-red-600 dark:text-neutral-300': character.status == 'error',
 					}"
 					:key="character.position"
 					>{{ character.letter }}</span
@@ -74,7 +76,7 @@ const timer = computed(() => {
 })
 
 const wpm = computed(() => {
-	return Math.ceil((cursorPosition.value / 5 / parseInt((time.value / 100))) * 60)
+	return Math.ceil((cursorPosition.value / 5 / parseInt(time.value / 100)) * 60)
 })
 
 document.onkeydown = function (event) {
