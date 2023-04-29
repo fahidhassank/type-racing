@@ -93,8 +93,8 @@ const accuracy = computed(() => {
 
 const timer = computed(() => {
 	let diff
-	const milliseconds = time.value % 100
-	diff = (time.value - milliseconds) / 100
+	const milliseconds = time.value % 1000
+	diff = (time.value - milliseconds) / 1000
 	const seconds = diff % 60
 	const minutes = (diff - seconds) / 60
 	return (
@@ -102,7 +102,7 @@ const timer = computed(() => {
 		":" +
 		seconds.toString().padStart(2, "0") +
 		":" +
-		milliseconds.toString().padStart(2, "0")
+		(milliseconds / 10).toString().padStart(2, "0")
 	)
 })
 
@@ -137,7 +137,7 @@ document.onkeydown = function (event) {
 
 		if (!timerInterval.value) {
 			timerInterval.value = setInterval(function () {
-				time.value += 1
+				time.value += 10
 			}, 10)
 		}
 
