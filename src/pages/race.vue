@@ -1,6 +1,8 @@
 <template>
-	<div class="flex flex-col h-screen select-none dark:text-neutral-300">
-		<div class="p-4 font-mono flex">
+	<div
+		class="flex flex-col h-screen select-none dark:text-neutral-300 font-mono"
+	>
+		<div class="p-4 flex">
 			<div>
 				<div class="text-sm text-left">Accuracy</div>
 				<div class="text-xl">{{ accuracy }}%</div>
@@ -18,7 +20,7 @@
 			<div class="text-2xl font-medium leading-relaxed text-center">
 				<span
 					v-for="character in characters"
-					class="transition-all px-0.5 font-mono"
+					class="transition-all px-0.5"
 					:class="{
 						'text-neutral-500 dark:text-neutral-600':
 							character.status === 'success',
@@ -26,18 +28,56 @@
 						'bg-blue-500 text-white':
 							character.position === cursorPosition &&
 							character.status != 'error',
-						'bg-red-600 dark:text-neutral-300': character.status == 'error',
+						'bg-red-600 text-white': character.status == 'error',
 					}"
 					:key="character.position"
 					>{{ character.letter }}</span
 				>
 			</div>
 		</div>
+
+		<div
+			class="fixed h-screen w-screen bg-neutral-500 dark:bg-transparent bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4"
+			v-if="cursorPosition === text.length"
+		>
+			<div
+				class="bg-white dark:bg-neutral-900 p-6 rounded tracking-wider w-[300px] max-w-full uppercase text-center"
+			>
+				<div class="text-2xl font-bold mb-4">Race Completed</div>
+				<div
+					class="flex justify-between items-center text-lg font-bold text-neutral-700 dark:text-current"
+				>
+					<div>Accuracy:</div>
+					<div>{{ accuracy }}%</div>
+				</div>
+				<div
+					class="flex justify-between items-center text-lg font-bold text-neutral-700 dark:text-current"
+				>
+					<div>WPM:</div>
+					<div>{{ wpm }}</div>
+				</div>
+				<div
+					class="flex justify-between items-center text-lg font-bold text-neutral-700 dark:text-current"
+				>
+					<div>Time:</div>
+					<div>{{ timer }}</div>
+				</div>
+
+				<div class="mt-4">
+					<button
+						class="font-bold px-3 py-1 w-full border-neutral-800 dark:border-neutral-300 border-2 uppercase hover:bg-neutral-800 hover:text-white dark:hover:text-neutral-900 dark:hover:bg-neutral-300 transition-colors"
+						@click="restartRace"
+					>
+						Restart Race
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onMounted } from "vue"
 const text = ref()
 const cursorPosition = ref(0)
 const time = ref(0)
@@ -45,16 +85,7 @@ const timerInterval = ref()
 const characters = ref([])
 const errorCount = ref(0)
 
-text.value =
-	"It's much more difficult to play tennis with a bowling ball than it is to bowl with a tennis ball."
-
-characters.value = text.value.split("").map(function (character, index) {
-	return {
-		letter: character,
-		status: "pending",
-		position: index,
-	}
-})
+text.value = "it"
 
 const accuracy = computed(() => {
 	return ((1 - errorCount.value / (cursorPosition.value + 1)) * 100).toFixed(2)
@@ -111,17 +142,32 @@ document.onkeydown = function (event) {
 		}
 
 		if (cursorPosition.value === characters.value.length) {
-			alert("Finished")
 			clearInterval(timerInterval.value)
 		}
-	} else if (event.key === "Backspace" && cursorPosition.value > 0) {
-		/* cursorPosition.value--
-		let character = characters.value.find(
-			(char) => char.position === cursorPosition.value
-		)
-		character.status = "pending" */
 	}
 }
+
+const setCharacters = function () {
+	characters.value = text.value.split("").map(function (character, index) {
+		return {
+			letter: character,
+			status: "pending",
+			position: index,
+		}
+	})
+}
+
+const restartRace = function () {
+	cursorPosition.value = 0
+	time.value = 0
+	errorCount.value = 0
+	timerInterval.value = null
+	setCharacters()
+}
+
+onMounted(() => {
+	setCharacters()
+})
 </script>
 
 <style></style>
